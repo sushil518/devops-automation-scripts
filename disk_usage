@@ -1,0 +1,13 @@
+#!/bin/bash
+
+filesystem=("/" "/root" "/home")
+for i in ${filesystem[@]}; do
+	usage=$(df -h $i | tail -n 1 | awk '{print $5}' | cut -d % -f 1)
+	echo "Usage Percentage is: $usage%"
+	if [ $usage -ge 5 ]; then
+		alert="Running out of space on $i, usage is: $usage%"
+		echo $alert
+		echo "Sending out a disk space alert mail."
+		echo $alert | mail -s "$i is $usage% full" sushilkumar
+	fi
+done
